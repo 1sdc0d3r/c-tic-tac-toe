@@ -16,8 +16,9 @@ add_executable(${APP_EXECUTABLE}
         src/Player.cpp
         )
 
-find_program(VALGRIND "valgrind")
-if(VALGRIND)
-	add_custom_target(valgrind
-		COMMAND "${VALGRIND}" --tool=memcheck --leak-check=yes --show-reachable=yes $<TARGET_FILE:${APP_EXECUTABLE}>)
-endif()
+        #! this works... however gets stuck in a while loop because of user input -- use a num rand generator for input
+# find_program(VALGRIND "valgrind")
+# if(VALGRIND)
+# 	add_custom_target(valgrind
+# 		COMMAND "${VALGRIND}" --tool=memcheck --leak-check=yes --show-reachable=yes $<TARGET_FILE:${APP_EXECUTABLE}>)
+# endif()
