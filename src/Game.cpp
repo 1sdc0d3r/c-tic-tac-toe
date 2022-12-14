@@ -9,6 +9,7 @@ using namespace std;
 int main() {
   bool playing = true;
   bool testing = true;
+  int test_round{0};
 
   Board* board = new Board;
   Player player1;
@@ -59,8 +60,17 @@ int main() {
     }
     cout << "Play again? (n or y): ";
     std::string play_again = "n";
-    cin >> play_again;
-    if (play_again == "n") break;
+    if (testing and ++test_round < 20) {
+      play_again = "y";
+    } else
+      play_again = "n";
+    if (!testing) cin >> play_again;
+
+    if (play_again == "n") {
+      cout << player1;
+      cout << player2;
+      break;
+    };
 
     delete board;
     board = new Board;
