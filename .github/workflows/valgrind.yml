@@ -18,8 +18,8 @@ jobs:
         run: cmake -S .
       - name: make
         run: make
-      - name: make test
-        run: make test
+      # - name: make test
+      #   run: make test
       - name: make memcheck
         if: success() || failure()
         run: make valgrind
