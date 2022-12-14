@@ -6,6 +6,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 include_directories(inc)
 
+# set( APP_EXECUTABLE main )
 set( APP_EXECUTABLE main )
 
 add_executable(${APP_EXECUTABLE}

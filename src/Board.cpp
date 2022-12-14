@@ -31,14 +31,22 @@ Board::~Board() {
 };
 
 int* Board::GetSquare(int row, int column) const {
-  if (row < size_ && column < size_) return board_[row][column];
+  if (row < size_ && column < size_)
+    return board_[row][column];
+  else
+    return nullptr;
 };
 
-bool Board::CheckWin() const {
+bool Board::CheckWin(Player* player) const {
   //* there are patterns...
   // Not possible to win yet
-  if (totalMoves_ < (size_ * 2 - 1)) return 0;
+  if (totalMoves_ < (size_ * 2 - 1)) return false;
+  // board full
+  // else if (totalMoves_ == (size_ * size_)) {
+  //   cout << "moves: " << totalMoves_ << " " << size_ * size_ << endl;
 
+  //   return NULL;
+  // }
   /*
   int* cur_line[size_] = new[size_];
   int cur_player = 0;
@@ -56,56 +64,57 @@ bool Board::CheckWin() const {
   if ((*board_[0][0] != 0) &&
       ((*board_[0][0] == *board_[0][1]) && (*board_[0][0] == *board_[0][2]))) {
     // return *board_[0][0];
-    return true;
     //! row2 win
   } else if ((*board_[1][0] != 0) && ((*board_[1][0] == *board_[1][1]) &&
                                       (*board_[1][0] == *board_[1][2]))) {
     // return *board_[1][0];
-    return true;
   }  //! row3 win
   else if ((*board_[2][0] != 0) && ((*board_[2][0] == *board_[2][1]) &&
                                     (*board_[2][0] == *board_[2][2]))) {
     // return *board_[2][0];
-    return true;
   }  //! col 1 win
   else if ((*board_[0][0] != 0) && ((*board_[0][0] == *board_[1][0]) &&
                                     (*board_[0][0] == *board_[2][0]))) {
     // return *board_[0][0];
-    return true;
   }  //! col 2 win
   else if ((*board_[0][1] != 0) && ((*board_[0][1] == *board_[1][1]) &&
                                     (*board_[0][1] == *board_[2][1]))) {
     // return *board_[0][1];
-    return true;
   }  //! col 3 win
   else if ((*board_[0][2] != 0) && ((*board_[0][2] == *board_[1][2]) &&
                                     (*board_[0][2] == *board_[2][2]))) {
     // return *board_[0][2];
-    return true;
   }  //! diag L->R
   else if ((*board_[0][0] != 0) && ((*board_[0][0] == *board_[1][1]) &&
                                     (*board_[0][0] == *board_[2][2]))) {
     // return *board_[0][0];
-    return true;
   }  //! diag R->L
   else if ((*board_[0][2] != 0) && ((*board_[0][2] == *board_[1][1]) &&
                                     (*board_[0][2] == *board_[2][0]))) {
     // return *board_[0][2];
-    return true;
   } else
     return false;
+
+  cout << player->GetName() << " wins!" << endl;
+  player->SetWin();
+  return true;
 };
 
 bool Board::MarkSquare(int row, int column, Player* player) {
+  // change to 1 base index
   --row;
   --column;
-  if (*GetSquare(row, column) == 0) {
+  int* squarePtr = GetSquare(row, column);
+
+  if (squarePtr == nullptr)
+    return false;
+
+  else if (*squarePtr == 0) {
     *board_[row][column] = player->GetId();
     ++totalMoves_;
     return true;
   };
-  return false;
-}
+};
 
 std::ostream& operator<<(std::ostream& out, const Board& board) {
   // out << "  1  2  3" << endl;

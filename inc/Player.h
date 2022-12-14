@@ -7,18 +7,18 @@ using std::string;
 class Player {
  private:
   static int cur_playerId;
-  string* name_;
+  string name_ = "";
   double wins_{0};
-  double games_played_{1};
+  double games_played_{0};
 
   int player_id_;
 
  public:
   Player();
   Player(string name);
-  ~Player() {
-    delete name_;
-    name_ = nullptr;
+  ~Player(){
+      // delete name_;
+      // name_ = nullptr;
   };
 
   void SetName(string& name);
@@ -29,8 +29,8 @@ class Player {
   void IncGamesPlayed();
   double GetGamesPlayed();
 
-  // todo show stats
-  //   friend& ostream operator<<();
+  // show stats
+  friend std::ostream& operator<<(std::ostream& out, const Player& player);
 };
 
 #endif
