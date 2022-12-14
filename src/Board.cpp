@@ -31,7 +31,7 @@ Board::~Board() {
 };
 
 int* Board::GetSquare(int row, int column) const {
-  return board_[row][column];
+  if (row < size_ && column < size_) return board_[row][column];
 };
 
 bool Board::CheckWin() const {
@@ -97,7 +97,8 @@ bool Board::CheckWin() const {
 };
 
 bool Board::MarkSquare(int row, int column, Player* player) {
-  //   cout << "Choose a square: ";
+  --row;
+  --column;
   if (*GetSquare(row, column) == 0) {
     *board_[row][column] = player->GetId();
     ++totalMoves_;
@@ -107,8 +108,10 @@ bool Board::MarkSquare(int row, int column, Player* player) {
 }
 
 std::ostream& operator<<(std::ostream& out, const Board& board) {
+  // out << "  1  2  3" << endl;
+  // out << "  -  -  -";
   for (int i = 0; i < 3; ++i) {
-    out << "\n";
+    out << "\n" << i + 1 << "|";
     for (int j = 0; j < 3; ++j) {
       out << *board.board_[i][j] << "  ";
     };
