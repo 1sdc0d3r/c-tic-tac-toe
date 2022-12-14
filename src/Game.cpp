@@ -13,8 +13,8 @@ int main() {
   Player player2;
   Player* cur_player = &player1;
 
-  int row_in = NULL;
-  int column_in = NULL;
+  int row_in = 0;
+  int column_in = 0;
 
   while (playing) {
     cout << '\n' << cur_player->GetName() << "'s turn." << endl;
