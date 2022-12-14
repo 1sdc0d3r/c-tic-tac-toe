@@ -1,3 +1,5 @@
+#include <time.h>
+
 #include <cstring>
 #include <iostream>
 
@@ -10,6 +12,10 @@ int main() {
   bool playing = true;
   bool testing = true;
   int test_round{0};
+  int num_of_test_rounds{5};
+
+  // Use current time as seed for testing random generator
+  srand(time(0));
 
   Board* board = new Board;
   Player player1;
@@ -47,8 +53,8 @@ int main() {
       }
       if (board->CheckWin(cur_player)) {
         cout << *board;
-        cout << cur_player->GetName() << " wins!" << endl;
-        cur_player->SetWin();
+        // cout << cur_player->GetName() << " wins!" << endl;
+        // cur_player->SetWin();
         break;
       } else if (board->GetMoves() == (board->GetSize() * board->GetSize())) {
         cout << *board;
@@ -58,17 +64,21 @@ int main() {
       // set cur_player to next player
       cur_player == & player1 ? cur_player = &player2 : cur_player = &player1;
     }
-    cout << "Play again? (n or y): ";
     std::string play_again = "n";
-    if (testing and ++test_round < 20) {
+    if (testing and ++test_round < num_of_test_rounds) {
       play_again = "y";
     } else
       play_again = "n";
-    if (!testing) cin >> play_again;
+    if (!testing) {
+      cout << "Play again? (n or y): ";
+      cin >> play_again;
+    };
 
     if (play_again == "n") {
+      cout << endl;
       cout << player1;
       cout << player2;
+      cout << endl;
       break;
     };
 

@@ -1,5 +1,6 @@
 #include "Player.h"
 
+#include <iomanip>
 #include <ostream>
 #include <string>
 using std::string;
@@ -28,11 +29,13 @@ double Player::GetWins() { return wins_; };
 void Player::IncGamesPlayed() { ++games_played_; };
 double Player::GetGamesPlayed() { return games_played_; };
 
-// todo dividing by double
+// todo when 100% it shows 1e+0
 std::ostream& operator<<(std::ostream& out, const Player& player) {
+  out << std::setprecision(2);
+
   out << player.name_ << " has won " << player.wins_ << " out of "
       << player.games_played_ << " games. "
-      << player.wins_ / player.games_played_ << "% won" << std::endl;
+      << (player.wins_ / player.games_played_) * 100 << "% won" << std::endl;
 
   return out;
 };
