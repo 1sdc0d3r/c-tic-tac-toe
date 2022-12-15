@@ -20,3 +20,5 @@ board.cpp
 Exception has occurred.
 EXC_BAD_ACCESS (code=1, address=0x0)
 if (\*squarePtr == 0) # no \
+
+mark square not working every turn for 'ai' on single player mode

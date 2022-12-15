@@ -1,6 +1,6 @@
 // only defined if Valgrind running on github actions
 #ifndef TESTING
-#define TESTING true
+#define TESTING false
 #endif
 
 #include <time.h>
@@ -33,6 +33,7 @@ int main() {
           "want?[max: 5] ";
 
   if (!TESTING) cin >> players_in;
+
   if (TESTING) players_in = 2;
 
   if (players_in > 5)
@@ -40,29 +41,38 @@ int main() {
   else if (players_in < 1)
     players_in = 1;
 
-  // Player* players[players_in];
-  vector<Player*> players(players_in);
-  // cout << players.size();
+  vector<Player*> players(players_in == 1 ? 2 : players_in);
+
+  //? why does this work below for loop and not above...
+  // if (players_in == 1) {
+  //   // players.resize(2);  // or use if statement for initialization
+  //   players[1] = new Player("Jack Barry");
+  // };
 
   string player_name = "Jack Barry ";
   for (int i = 0; i < players_in; ++i) {
     cout << "\nPlayer " << i + 1 << " choose your name: ";
-    //!
     if (!TESTING) cin >> player_name;
+    if (!TESTING) player_name = "me";
     if (TESTING) player_name += to_string(i);
 
     players[i] = new Player(player_name);
     //? players.push_back(new Player(player_name));
   };
 
+  if (players_in == 1) {
+    // players.resize(2);  // or use if statement for initialization
+    players[1] = new Player("Jack Barry");
+  };
+
   while (playing) {
     cout << endl;
-    for (Player* player : players) {
-      if (!TESTING) cout << *player;
-      player->IncGamesPlayed();
-    }
     Player* cur_player = *players.begin();
-    // cout << "cur: " << cur_player->GetId();
+    cout << "cur: " << cur_player->GetId() << endl;
+    ;
+    for (Player* player : players) {
+      cout << *player;
+    }
 
     while (true) {
       if (!TESTING) cout << *board;
@@ -70,10 +80,24 @@ int main() {
       if (!TESTING) cout << '\n' << cur_player->GetName() << "'s turn." << endl;
       if (!TESTING) {
         // todo use cout row/column same as testing
-        cout << "Choose row: ";
-        cin >> row_in;
-        cout << "Choose column: ";
-        cin >> column_in;
+        cout << "players:" << players_in << " curPlayer: " << cur_player
+             << " player[1] " << players[1] << " back: " << players.back()
+             << endl;
+
+        if (players_in == 1 && cur_player == players[1]) {
+          cout << "Choose row: ";
+          row_in = rand() % board->GetSize();
+          cout << row_in << endl;
+
+          cout << "Choose column: ";
+          column_in = rand() % board->GetSize();
+          cout << column_in << endl;
+        } else {
+          cout << "Choose row: ";
+          cin >> row_in;
+          cout << "Choose column: ";
+          cin >> column_in;
+        };
       } else {
         row_in = rand() % board->GetSize();
         column_in = rand() % board->GetSize();
@@ -102,7 +126,7 @@ int main() {
         continue;
       };
       // if (!TESTING)
-      cout << *board;
+      // cout << *board;
       if (board->CheckWin(cur_player)) {
         // if (TESTING) cout << *board;
         if (TESTING) cout << "row: " << row_in << " col: " << column_in << endl;
@@ -122,6 +146,11 @@ int main() {
       // cur_player == & player1 ? cur_player = &player2 : cur_player =
       // &player1;
     }
+    // print stats and inc game played
+    for (Player* player : players) {
+      cout << *player;
+      player->IncGamesPlayed();
+    }
     std::string play_again = "n";
     if (TESTING and ++test_round < num_of_test_rounds) {
       play_again = "y";
@@ -133,11 +162,6 @@ int main() {
     };
 
     if (play_again == "n") {
-      cout << endl;
-      for (Player* player : players) {
-        cout << *player;
-        player->IncGamesPlayed();
-      }
       cout << endl;
       break;
     };
