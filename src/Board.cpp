@@ -9,7 +9,6 @@
 using namespace std;
 
 Board::Board() {
-  cout << "size_: " << size_;
   board_.resize(size_);
 
   for (int i = 0; i < size_; ++i) {
@@ -90,6 +89,7 @@ bool Board::CheckWin(Player* player) const {
   //* if last, 2nd last, 3rd last...
   // Not possible to win yet
   if (totalMoves_ < (size_ * 2 - 1)) return false;
+
   // board full
   // else if (totalMoves_ == (size_ * size_)) {
   //   cout << "moves: " << totalMoves_ << " " << size_ * size_ << endl;
@@ -113,7 +113,6 @@ bool Board::CheckWin(Player* player) const {
     };
     for (int j = 0; j < size_; ++j) {
       int cur = *GetSquare(i, j);
-      cout << "cur: " << cur << endl;
       // if(cur == 0) //? maybe just pass/break
       //? if cur == 0 does it negate the rest of this loop
       //! horizontal row
@@ -134,26 +133,24 @@ bool Board::CheckWin(Player* player) const {
         prev_col_int[j] = 0;
       //* check any columns all matching on last iteration
       if (i == true_size && prev_col_int[j] != 0) {
-        cout << "full column: " << j << endl;
+        cout << "full column: " << j + 1 << endl;
         win = true;
       }
       //! Left to Right Diag
       if (i == 0 && j == 0)  //* init first
         prev_left_diag = cur;
-      else if (prev_left_diag != 0 && i == j && prev_left_diag == cur)
-        prev_left_diag = cur;
-      else
-        prev_left_diag = 0;  // reset back to 0
+      else if (i == j && prev_left_diag != cur)
+        prev_left_diag = 0;
       //? pull this out of loop? var will be 0 or not
-      if (i == j && i == true_size && prev_left_diag == cur) {
+      if (i == j && i == true_size && prev_left_diag != 0) {
         cout << "Left to Right diagonal" << endl;
         win = true;
       };
       //! Right to Left Diag
-      if (i == true_size && j == true_size)  //* init first
+      if (i == (true_size - j) && j == true_size)  //* init first
         prev_right_diag = cur;
-      else if (prev_right_diag != 0 && (i == (true_size - j)))
-        prev_right_diag = cur;
+      else if ((i == (true_size - j)) && prev_right_diag != cur)
+        prev_right_diag = 0;
       //? pull this out of loop? var will be 0 or not
       if (i == true_size && j == 0 && prev_right_diag != 0) {
         cout << "Right to Left diagonal" << endl;

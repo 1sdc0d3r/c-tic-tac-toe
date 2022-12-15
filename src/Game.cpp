@@ -18,12 +18,12 @@ using namespace std;
 int main() {
   bool playing = true;
   int test_round{0};
-  int num_of_test_rounds{5};
+  int num_of_test_rounds{15};
 
   // Use current time as seed for TESTING random generator
   if (TESTING) srand(time(0));
 
-  Board* board = new Board(2);
+  Board* board = new Board(3);
 
   int row_in = 0;
   int column_in = 0;
@@ -58,7 +58,7 @@ int main() {
   while (playing) {
     cout << endl;
     for (Player* player : players) {
-      cout << *player;
+      if (!TESTING) cout << *player;
       player->IncGamesPlayed();
     }
     Player* cur_player = *players.begin();
@@ -67,7 +67,7 @@ int main() {
     while (true) {
       if (!TESTING) cout << *board;
 
-      cout << '\n' << cur_player->GetName() << "'s turn." << endl;
+      if (!TESTING) cout << '\n' << cur_player->GetName() << "'s turn." << endl;
       if (!TESTING) {
         // todo use cout row/column same as testing
         cout << "Choose row: ";
@@ -77,19 +77,38 @@ int main() {
       } else {
         row_in = rand() % board->GetSize();
         column_in = rand() % board->GetSize();
+        // cout << "moves: " << board->GetMoves() << endl;
+        if (board->GetMoves() == 0) {
+          cout << "move: " << 0 << endl;
+          row_in = 0;
+          column_in = 2;
+        } else if (board->GetMoves() == 1) {
+          cout << "move: " << 1 << endl;
+          row_in = 1;
+          column_in = 1;
+        } else if (board->GetMoves() == 2) {
+          cout << "move: " << 2 << endl;
+          row_in = 2;
+          column_in = 0;
+        }
+        cout << "rand: " << row_in << " " << column_in << endl;
         row_in++;
         column_in++;
-        cout << "row: " << row_in << " col: " << column_in << endl;
+        if (!TESTING)
+          cout << "row: " << row_in << " col: " << column_in << endl;
       }
       if (board->MarkSquare(row_in, column_in, cur_player) == false) {
-        cout << "Invalid space. Try again..." << endl;
+        if (!TESTING) cout << "Invalid space. Try again..." << endl;
         continue;
-      }
+      };
+      // if (!TESTING)
+      cout << *board;
       if (board->CheckWin(cur_player)) {
-        cout << *board;
+        // if (TESTING) cout << *board;
+        if (TESTING) cout << "row: " << row_in << " col: " << column_in << endl;
         break;
       } else if (board->GetMoves() == (board->GetSize() * board->GetSize())) {
-        cout << *board;
+        if (TESTING) cout << *board;
         cout << "It's a tie!" << endl;
         break;
       };
