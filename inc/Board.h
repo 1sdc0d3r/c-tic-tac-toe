@@ -2,6 +2,7 @@
 // #define BOARD_H
 #pragma once
 #include <ostream>
+#include <vector>
 
 #include "Player.h"
 
@@ -9,18 +10,18 @@ struct col_row {
   int column;
   int row;
 };
-
+using std::vector;
 class Board {
  private:
-  int* board_[3][3];
-  //   int** board_ = NULL;
+  // int* board_[3][3];
   int size_ = 3;  //* keep square
   int totalMoves_{0};
 
  public:
+  vector<vector<int*>> board_;
   Board();
   // todo dynamically allocate board for custom size
-  //   Board(int columns, int rows);
+  Board(int size);
   ~Board();
 
   int* GetSquare(int row, int column) const;

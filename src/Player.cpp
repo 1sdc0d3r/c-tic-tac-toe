@@ -32,10 +32,12 @@ double Player::GetGamesPlayed() { return games_played_; };
 // todo when 100% it shows 1e+0
 std::ostream& operator<<(std::ostream& out, const Player& player) {
   out << std::setprecision(2);
+  double win_ratio = (player.wins_ / player.games_played_) * 100;
+  if (player.games_played_ == 0) win_ratio = 0;
 
   out << player.name_ << " has won " << player.wins_ << " out of "
-      << player.games_played_ << " games. "
-      << (player.wins_ / player.games_played_) * 100 << "% won" << std::endl;
+      << player.games_played_ << " games. " << win_ratio << "% won"
+      << std::endl;
 
   return out;
 };

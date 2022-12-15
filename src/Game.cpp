@@ -19,28 +19,59 @@ int main() {
   int test_round{0};
   int num_of_test_rounds{5};
 
+  Player player1;
+  Player player2;
+
   // Use current time as seed for TESTING random generator
   if (TESTING) srand(time(0));
 
   Board* board = new Board;
-  Player player1;
-  Player player2("Jack Barry");
-  Player* cur_player = &player1;
 
   int row_in = 0;
   int column_in = 0;
+  int players_in = 0;
+
+  cout << "Welcome to multiplayer tic-tac-toe!\nHow many players do you "
+          "want?[max: 5] ";
+
+  //!
+  // cin >> players_in;
+  players_in = 3;
+
+  if (players_in > 5)
+    players_in = 5;
+  else if (players_in < 1)
+    players_in = 1;
+
+  // Player* players[players_in];
+  vector<Player*> players(players_in);
+  // cout << players.size();
+
+  string player_name = "Jack";
+  for (int i = 0; i < players_in; ++i) {
+    cout << "\nPlayer " << i + 1 << " choose your name: ";
+    //!
+    // cin >> player_name;
+    players[i] = new Player(player_name);
+
+    //? players.push_back(new Player(player_name));
+  };
 
   while (playing) {
     cout << endl;
-    cout << player1;
-    cout << player2;
-    player1.IncGamesPlayed();
-    player2.IncGamesPlayed();
+    for (Player* player : players) {
+      cout << *player;
+      player->IncGamesPlayed();
+    }
+    Player* cur_player = *players.begin();
+    // cout << "cur: " << cur_player->GetId();
 
     while (true) {
       cout << *board;
+
       cout << '\n' << cur_player->GetName() << "'s turn." << endl;
       if (!TESTING) {
+        // todo use cout row/column same as testing
         cout << "Choose row: ";
         cin >> row_in;
         cout << "Choose column: ";
@@ -58,8 +89,6 @@ int main() {
       }
       if (board->CheckWin(cur_player)) {
         cout << *board;
-        // cout << cur_player->GetName() << " wins!" << endl;
-        // cur_player->SetWin();
         break;
       } else if (board->GetMoves() == (board->GetSize() * board->GetSize())) {
         cout << *board;
@@ -67,7 +96,14 @@ int main() {
         break;
       };
       // set cur_player to next player
-      cur_player == & player1 ? cur_player = &player2 : cur_player = &player1;
+      // next gets next player in vector
+      if (cur_player == players.back())
+        cur_player = *players.begin();
+      else
+        cur_player = next(cur_player, 1);
+
+      // cur_player == & player1 ? cur_player = &player2 : cur_player =
+      // &player1;
     }
     std::string play_again = "n";
     if (TESTING and ++test_round < num_of_test_rounds) {
@@ -81,8 +117,10 @@ int main() {
 
     if (play_again == "n") {
       cout << endl;
-      cout << player1;
-      cout << player2;
+      for (Player* player : players) {
+        cout << *player;
+        player->IncGamesPlayed();
+      }
       cout << endl;
       break;
     };

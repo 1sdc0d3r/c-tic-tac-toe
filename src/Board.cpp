@@ -1,26 +1,39 @@
 #include "Board.h"
 
-#include "Player.h"
+#include <vector>
 
+#include "Player.h"
 // #include <array>
 #include <iostream>
 using namespace std;
 
 Board::Board() {
-  for (int i = 0; i < 3; ++i) {
-    for (int j = 0; j < 3; ++j) {
-      board_[i][j] = new int{0};  //? {} vs ()
+  board_.resize(size_);
+
+  for (int i = 0; i < size_; ++i) {
+    board_[i].resize(size_);
+    // fill(board_[i].begin(), board_[i].end(), new int{0});
+    for (int j = 0; j < size_; ++j) {
+      board_[i][j] = new int{0};
     };
+  }
+
+  // for (int i = 0; i < size_; ++i) {
+  //   for (int j = 0; j < size_; ++j) {
+  //     board_[i][j] = new int{0};  //? {} vs ()
+  //   };
+  // };
+};
+Board::Board(int size) : size_(size) {
+  cout << "size_: " << size_;
+  board_.resize(size_);
+
+  for (int i = 0; i < size_; ++i) {
+    board_[i].resize(size_);
+    fill(board_[i].begin(), board_[i].end(), new int{0});
   };
 };
-// Board::Board(int columns, int rows) {
-//   board_ = new int[columns][rows];
-//   for (int i = 0; i < columns; ++i) {
-//     for (int j = 0; j < rows; ++j) {
-//       //   board_
-//     };
-//   };
-// };
+
 Board::~Board() {
   for (int i = 0; i < size_; ++i) {
     for (int j = 0; j < size_; ++j) {
@@ -35,6 +48,34 @@ int* Board::GetSquare(int row, int column) const {
     return board_[row][column];
   else
     return nullptr;
+};
+
+bool Board::MarkSquare(int row, int column, Player* player) {
+  // change to 1 base index
+  --row;
+  --column;
+  int* squarePtr = GetSquare(row, column);
+  // squarePtr == nullptr if out of range
+
+  if (*squarePtr == 0) {
+    *board_[row][column] = player->GetId();
+    ++totalMoves_;
+    return true;
+  };
+  return false;
+};
+
+std::ostream& operator<<(std::ostream& out, const Board& board) {
+  // out << "  1  2  3" << endl;
+  // out << "  -  -  -";
+  for (int i = 0; i < 3; ++i) {
+    out << "\n" << i + 1 << "|";
+    for (int j = 0; j < 3; ++j) {
+      out << *board.board_[i][j] << "  ";
+    };
+  };
+  out << endl << endl;
+  return out;
 };
 
 bool Board::CheckWin(Player* player) const {
@@ -98,32 +139,4 @@ bool Board::CheckWin(Player* player) const {
   cout << player->GetName() << " wins!" << endl;
   player->SetWin();
   return true;
-};
-
-bool Board::MarkSquare(int row, int column, Player* player) {
-  // change to 1 base index
-  --row;
-  --column;
-  int* squarePtr = GetSquare(row, column);
-  // squarePtr == nullptr if out of range
-
-  if (*squarePtr == 0) {
-    *board_[row][column] = player->GetId();
-    ++totalMoves_;
-    return true;
-  };
-  return false;
-};
-
-std::ostream& operator<<(std::ostream& out, const Board& board) {
-  // out << "  1  2  3" << endl;
-  // out << "  -  -  -";
-  for (int i = 0; i < 3; ++i) {
-    out << "\n" << i + 1 << "|";
-    for (int j = 0; j < 3; ++j) {
-      out << *board.board_[i][j] << "  ";
-    };
-  };
-  out << endl << endl;
-  return out;
 };
