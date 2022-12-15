@@ -112,15 +112,16 @@ bool Board::CheckWin(Player* player) const {
       win = true;
     };
     for (int j = 0; j < size_; ++j) {
-      int cur = *GetSquare(i + 1, j + 1);
+      int cur = *GetSquare(i, j);
+      cout << "cur: " << cur << endl;
       // if(cur == 0) //? maybe just pass/break
       //? if cur == 0 does it negate the rest of this loop
       //! horizontal row
       if (j == 0) {
         prev_row_int = cur;  //* first in row
         // } else if (prev_row_int != cur || cur == 0) {
-      } else if (prev_row_int != 0) {
-        prev_row_int = cur;
+      } else if (prev_row_int != cur) {
+        prev_row_int = 0;
       }  //* if true on next iteration of i
       // else
       //   prev_row_int = cur;
@@ -136,17 +137,19 @@ bool Board::CheckWin(Player* player) const {
         cout << "full column: " << j << endl;
         win = true;
       }
-      //! Left Diag
+      //! Left to Right Diag
       if (i == 0 && j == 0)  //* init first
         prev_left_diag = cur;
-      else if (prev_left_diag != 0 && i == j)
+      else if (prev_left_diag != 0 && i == j && prev_left_diag == cur)
         prev_left_diag = cur;
+      else
+        prev_left_diag = 0;  // reset back to 0
       //? pull this out of loop? var will be 0 or not
-      if (i == j && i == true_size && prev_left_diag != 0) {
+      if (i == j && i == true_size && prev_left_diag == cur) {
         cout << "Left to Right diagonal" << endl;
         win = true;
       };
-      //! Right Diag
+      //! Right to Left Diag
       if (i == true_size && j == true_size)  //* init first
         prev_right_diag = cur;
       else if (prev_right_diag != 0 && (i == (true_size - j)))

@@ -23,7 +23,7 @@ int main() {
   // Use current time as seed for TESTING random generator
   if (TESTING) srand(time(0));
 
-  Board* board = new Board(4);
+  Board* board = new Board(2);
 
   int row_in = 0;
   int column_in = 0;
@@ -65,7 +65,7 @@ int main() {
     // cout << "cur: " << cur_player->GetId();
 
     while (true) {
-      cout << *board;
+      if (!TESTING) cout << *board;
 
       cout << '\n' << cur_player->GetName() << "'s turn." << endl;
       if (!TESTING) {
