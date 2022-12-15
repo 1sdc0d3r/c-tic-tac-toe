@@ -1,7 +1,13 @@
+// only defined if Valgrind running on github actions
+#ifndef TESTING
+#define TESTING false
+#endif
+
 #include <time.h>
 
 #include <cstring>
 #include <iostream>
+// #include <optional>
 
 #include "Board.h"
 #include "Player.h"
@@ -10,12 +16,11 @@ using namespace std;
 
 int main() {
   bool playing = true;
-  bool testing = true;
   int test_round{0};
   int num_of_test_rounds{5};
 
-  // Use current time as seed for testing random generator
-  srand(time(0));
+  // Use current time as seed for TESTING random generator
+  if (TESTING) srand(time(0));
 
   Board* board = new Board;
   Player player1;
@@ -35,7 +40,7 @@ int main() {
     while (true) {
       cout << *board;
       cout << '\n' << cur_player->GetName() << "'s turn." << endl;
-      if (!testing) {
+      if (!TESTING) {
         cout << "Choose row: ";
         cin >> row_in;
         cout << "Choose column: ";
@@ -65,11 +70,11 @@ int main() {
       cur_player == & player1 ? cur_player = &player2 : cur_player = &player1;
     }
     std::string play_again = "n";
-    if (testing and ++test_round < num_of_test_rounds) {
+    if (TESTING and ++test_round < num_of_test_rounds) {
       play_again = "y";
     } else
       play_again = "n";
-    if (!testing) {
+    if (!TESTING) {
       cout << "Play again? (n or y): ";
       cin >> play_again;
     };
