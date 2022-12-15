@@ -105,15 +105,14 @@ bool Board::MarkSquare(int row, int column, Player* player) {
   --row;
   --column;
   int* squarePtr = GetSquare(row, column);
+  // squarePtr == nullptr if out of range
 
-  if (squarePtr == nullptr)
-    return false;
-
-  else if (*squarePtr == 0) {
+  if (*squarePtr == 0) {
     *board_[row][column] = player->GetId();
     ++totalMoves_;
     return true;
   };
+  return false;
 };
 
 std::ostream& operator<<(std::ostream& out, const Board& board) {
