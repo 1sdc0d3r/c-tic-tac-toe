@@ -1,12 +1,13 @@
 // only defined if Valgrind running on github actions
 #ifndef TESTING
-#define TESTING false
+#define TESTING true
 #endif
 
 #include <time.h>
 
 #include <cstring>
 #include <iostream>
+#include <string>
 // #include <optional>
 
 #include "Board.h"
@@ -31,9 +32,8 @@ int main() {
   cout << "Welcome to multiplayer tic-tac-toe!\nHow many players do you "
           "want?[max: 5] ";
 
-  //!
-  // cin >> players_in;
-  players_in = 3;
+  if (!TESTING) cin >> players_in;
+  if (TESTING) players_in = 2;
 
   if (players_in > 5)
     players_in = 5;
@@ -44,13 +44,14 @@ int main() {
   vector<Player*> players(players_in);
   // cout << players.size();
 
-  string player_name = "Jack";
+  string player_name = "Jack Barry ";
   for (int i = 0; i < players_in; ++i) {
     cout << "\nPlayer " << i + 1 << " choose your name: ";
     //!
-    // cin >> player_name;
-    players[i] = new Player(player_name);
+    if (!TESTING) cin >> player_name;
+    if (TESTING) player_name += to_string(i);
 
+    players[i] = new Player(player_name);
     //? players.push_back(new Player(player_name));
   };
 

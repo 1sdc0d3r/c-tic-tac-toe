@@ -101,6 +101,7 @@ bool Board::CheckWin(Player* player) const {
   int prev_left_diag = 0;
   int prev_right_diag = 0;
   int true_size = size_ - 1;
+  bool win = false;
 
   vector<int> prev_col_int(size_, 0);
 
@@ -108,6 +109,7 @@ bool Board::CheckWin(Player* player) const {
     // cout << board[i] << endl;
     if (prev_row_int != 0) {
       cout << "full horizontal row: " << i << endl;
+      win = true;
     };
     for (int j = 0; j < size_; ++j) {
       int cur = *GetSquare(i + 1, j + 1);
@@ -132,6 +134,7 @@ bool Board::CheckWin(Player* player) const {
       //* check any columns all matching on last iteration
       if (i == true_size && prev_col_int[j] != 0) {
         cout << "full column: " << j << endl;
+        win = true;
       }
       //! Left Diag
       if (i == 0 && j == 0)  //* init first
@@ -141,6 +144,7 @@ bool Board::CheckWin(Player* player) const {
       //? pull this out of loop? var will be 0 or not
       if (i == j && i == true_size && prev_left_diag != 0) {
         cout << "Left to Right diagonal" << endl;
+        win = true;
       };
       //! Right Diag
       if (i == true_size && j == true_size)  //* init first
@@ -150,9 +154,16 @@ bool Board::CheckWin(Player* player) const {
       //? pull this out of loop? var will be 0 or not
       if (i == true_size && j == 0 && prev_right_diag != 0) {
         cout << "Right to Left diagonal" << endl;
+        win = true;
       };
+      if (win) {
+        cout << player->GetName() << " wins!" << endl;
+        player->SetWin();
+        return true;
+      }
     };
   };
+  return false;
 };
 /*
 //! row 1 win
