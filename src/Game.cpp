@@ -19,13 +19,10 @@ int main() {
   int test_round{0};
   int num_of_test_rounds{5};
 
-  Player player1;
-  Player player2;
-
   // Use current time as seed for TESTING random generator
   if (TESTING) srand(time(0));
 
-  Board* board = new Board;
+  Board* board = new Board(4);
 
   int row_in = 0;
   int column_in = 0;

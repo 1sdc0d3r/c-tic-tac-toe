@@ -1,5 +1,6 @@
 #include "Board.h"
 
+#include <array>
 #include <vector>
 
 #include "Player.h"
@@ -8,6 +9,7 @@
 using namespace std;
 
 Board::Board() {
+  cout << "size_: " << size_;
   board_.resize(size_);
 
   for (int i = 0; i < size_; ++i) {
@@ -24,14 +26,16 @@ Board::Board() {
   //   };
   // };
 };
-Board::Board(int size) : size_(size) {
-  cout << "size_: " << size_;
-  board_.resize(size_);
+Board::Board(int size) {
+  this->size_ = size;
 
+  board_.resize(size_);
   for (int i = 0; i < size_; ++i) {
     board_[i].resize(size_);
-    fill(board_[i].begin(), board_[i].end(), new int{0});
-  };
+    for (int j = 0; j < size_; ++j) {
+      board_[i][j] = new int{0};
+    };
+  }
 };
 
 Board::~Board() {
@@ -68,9 +72,9 @@ bool Board::MarkSquare(int row, int column, Player* player) {
 std::ostream& operator<<(std::ostream& out, const Board& board) {
   // out << "  1  2  3" << endl;
   // out << "  -  -  -";
-  for (int i = 0; i < 3; ++i) {
+  for (int i = 0; i < board.GetSize(); ++i) {
     out << "\n" << i + 1 << "|";
-    for (int j = 0; j < 3; ++j) {
+    for (int j = 0; j < board.GetSize(); ++j) {
       out << *board.board_[i][j] << "  ";
     };
   };
@@ -80,6 +84,10 @@ std::ostream& operator<<(std::ostream& out, const Board& board) {
 
 bool Board::CheckWin(Player* player) const {
   //* there are patterns...
+  //* if any rows(full sub-vector)
+  //* if any columns (first, second... all same)
+  //* if first, second, third elem same
+  //* if last, 2nd last, 3rd last...
   // Not possible to win yet
   if (totalMoves_ < (size_ * 2 - 1)) return false;
   // board full
@@ -88,55 +96,102 @@ bool Board::CheckWin(Player* player) const {
 
   //   return NULL;
   // }
-  /*
-  int* cur_line[size_] = new[size_];
-  int cur_player = 0;
+  // todo change this to use the ptrs for memory efficiency
+  int prev_row_int = 0;
+  int prev_left_diag = 0;
+  int prev_right_diag = 0;
+  int true_size = size_ - 1;
 
-  for (int i = 0; i < 3; ++i) {
-    for (int j = 0; j < 3; ++j) {
-      if (*board_[i][j] != 0) {
-        //   check from each space if remaining possibilities for win
+  vector<int> prev_col_int(size_, 0);
 
-      }
+  for (int i = 0; i < size_; ++i) {
+    // cout << board[i] << endl;
+    if (prev_row_int != 0) {
+      cout << "full horizontal row: " << i << endl;
     };
-  };*/
-
-  //! row 1 win
-  if ((*board_[0][0] != 0) &&
-      ((*board_[0][0] == *board_[0][1]) && (*board_[0][0] == *board_[0][2]))) {
-    // return *board_[0][0];
-    //! row2 win
-  } else if ((*board_[1][0] != 0) && ((*board_[1][0] == *board_[1][1]) &&
-                                      (*board_[1][0] == *board_[1][2]))) {
-    // return *board_[1][0];
-  }  //! row3 win
-  else if ((*board_[2][0] != 0) && ((*board_[2][0] == *board_[2][1]) &&
-                                    (*board_[2][0] == *board_[2][2]))) {
-    // return *board_[2][0];
-  }  //! col 1 win
-  else if ((*board_[0][0] != 0) && ((*board_[0][0] == *board_[1][0]) &&
-                                    (*board_[0][0] == *board_[2][0]))) {
-    // return *board_[0][0];
-  }  //! col 2 win
-  else if ((*board_[0][1] != 0) && ((*board_[0][1] == *board_[1][1]) &&
-                                    (*board_[0][1] == *board_[2][1]))) {
-    // return *board_[0][1];
-  }  //! col 3 win
-  else if ((*board_[0][2] != 0) && ((*board_[0][2] == *board_[1][2]) &&
-                                    (*board_[0][2] == *board_[2][2]))) {
-    // return *board_[0][2];
-  }  //! diag L->R
-  else if ((*board_[0][0] != 0) && ((*board_[0][0] == *board_[1][1]) &&
-                                    (*board_[0][0] == *board_[2][2]))) {
-    // return *board_[0][0];
-  }  //! diag R->L
-  else if ((*board_[0][2] != 0) && ((*board_[0][2] == *board_[1][1]) &&
-                                    (*board_[0][2] == *board_[2][0]))) {
-    // return *board_[0][2];
-  } else
-    return false;
-
-  cout << player->GetName() << " wins!" << endl;
-  player->SetWin();
-  return true;
+    for (int j = 0; j < size_; ++j) {
+      int cur = *GetSquare(i + 1, j + 1);
+      // if(cur == 0) //? maybe just pass/break
+      //? if cur == 0 does it negate the rest of this loop
+      //! horizontal row
+      if (j == 0) {
+        prev_row_int = cur;  //* first in row
+        // } else if (prev_row_int != cur || cur == 0) {
+      } else if (prev_row_int != 0) {
+        prev_row_int = cur;
+      }  //* if true on next iteration of i
+      // else
+      //   prev_row_int = cur;
+      //! columns
+      if (i == 0 && cur != 0)
+        prev_col_int[j] = cur;  //* set first row
+      else if (prev_col_int[j] != 0 && prev_col_int[j] == cur)
+        prev_col_int[j] = cur;
+      else
+        prev_col_int[j] = 0;
+      //* check any columns all matching on last iteration
+      if (i == true_size && prev_col_int[j] != 0) {
+        cout << "full column: " << j << endl;
+      }
+      //! Left Diag
+      if (i == 0 && j == 0)  //* init first
+        prev_left_diag = cur;
+      else if (prev_left_diag != 0 && i == j)
+        prev_left_diag = cur;
+      //? pull this out of loop? var will be 0 or not
+      if (i == j && i == true_size && prev_left_diag != 0) {
+        cout << "Left to Right diagonal" << endl;
+      };
+      //! Right Diag
+      if (i == true_size && j == true_size)  //* init first
+        prev_right_diag = cur;
+      else if (prev_right_diag != 0 && (i == (true_size - j)))
+        prev_right_diag = cur;
+      //? pull this out of loop? var will be 0 or not
+      if (i == true_size && j == 0 && prev_right_diag != 0) {
+        cout << "Right to Left diagonal" << endl;
+      };
+    };
+  };
 };
+/*
+//! row 1 win
+if ((*board_[0][0] != 0) &&
+    ((*board_[0][0] == *board_[0][1]) && (*board_[0][0] == *board_[0][2]))) {
+  // return *board_[0][0];
+  //! row2 win
+} else if ((*board_[1][0] != 0) && ((*board_[1][0] == *board_[1][1]) &&
+                                    (*board_[1][0] == *board_[1][2]))) {
+  // return *board_[1][0];
+}  //! row3 win
+else if ((*board_[2][0] != 0) && ((*board_[2][0] == *board_[2][1]) &&
+                                  (*board_[2][0] == *board_[2][2]))) {
+  // return *board_[2][0];
+}  //! col 1 win
+else if ((*board_[0][0] != 0) && ((*board_[0][0] == *board_[1][0]) &&
+                                  (*board_[0][0] == *board_[2][0]))) {
+  // return *board_[0][0];
+}  //! col 2 win
+else if ((*board_[0][1] != 0) && ((*board_[0][1] == *board_[1][1]) &&
+                                  (*board_[0][1] == *board_[2][1]))) {
+  // return *board_[0][1];
+}  //! col 3 win
+else if ((*board_[0][2] != 0) && ((*board_[0][2] == *board_[1][2]) &&
+                                  (*board_[0][2] == *board_[2][2]))) {
+  // return *board_[0][2];
+}  //! diag L->R
+else if ((*board_[0][0] != 0) && ((*board_[0][0] == *board_[1][1]) &&
+                                  (*board_[0][0] == *board_[2][2]))) {
+  // return *board_[0][0];
+}  //! diag R->L
+else if ((*board_[0][2] != 0) && ((*board_[0][2] == *board_[1][1]) &&
+                                  (*board_[0][2] == *board_[2][0]))) {
+  // return *board_[0][2];
+} else
+  return false;
+
+cout << player->GetName() << " wins!" << endl;
+player->SetWin();
+return true;
+}
+*/
