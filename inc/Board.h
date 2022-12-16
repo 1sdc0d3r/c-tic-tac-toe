@@ -25,6 +25,7 @@ class Board {
   ~Board();
 
   int* GetSquare(int row, int column) const;
+  int GetRandomPos() const;
   bool CheckWin(Player* player) const;
   inline int GetSize() const { return size_; }
   inline int GetMoves() const { return totalMoves_; }
@@ -38,6 +39,7 @@ class Board {
    * @return int 0 if not valid space 1 if space is open
    */
   bool MarkSquare(int row, int column, Player* player);
+
   friend std::ostream& operator<<(std::ostream& out, const Board& board);
 };
 // #endif

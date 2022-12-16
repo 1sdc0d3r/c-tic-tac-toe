@@ -28,6 +28,7 @@ int main() {
   int players_in = 0;
   int bots_in = 0;
   int board_size = 3;
+  int total_players = 0;
   // int total_players = 0; //todo maybe? DRY
   const static int kMax_total_players = 5;
 
@@ -44,6 +45,7 @@ int main() {
          << kMax_total_players - players_in << "] ";
     if (!TESTING) cin >> bots_in;
   }
+  total_players = players_in + bots_in;
 
   if (TESTING) players_in = 2;
 
@@ -54,13 +56,15 @@ int main() {
     players_in = 1;
 
   // too many bots or not enough
-  if (players_in + bots_in > kMax_total_players)
+  if (total_players > kMax_total_players)
     bots_in = kMax_total_players - players_in;
   else if (players_in == 1 && bots_in < 1)
     bots_in = 1;
 
+  //? way to init this as a pointer so dont have to set again(line48)
+  total_players = players_in + bots_in;
   // vector<Player*> players(players_in == 1 ? 2 : players_in, nullptr);
-  vector<Player*> players(players_in + bots_in, nullptr);
+  vector<Player*> players(total_players, nullptr);
 
   //? why does this work below for loop and not above...
   // if (players_in == 1) {
@@ -69,7 +73,7 @@ int main() {
   // };
 
   string player_name = "";
-  for (int i = 0; i < players_in + bots_in; ++i) {
+  for (int i = 0; i < total_players; ++i) {
     if (i < players_in) {
       cout << "\nPlayer " << i + 1 << " choose your name: ";
       if (!TESTING) cin >> player_name;
@@ -84,11 +88,12 @@ int main() {
   // players.resize(2);  // or use if statement for initialization
   // };
 
+  cout << "tot" << total_players << endl;
   cout << endl;
   while (playing) {
     // Player* cur_player = *players.begin();
     //* set starting player randomly
-    Player* cur_player = players[rand() % (players_in + bots_in)];
+    Player* cur_player = players[rand() % (total_players)];
 
     while (true) {
       if (!TESTING) cout << *board;
@@ -99,28 +104,24 @@ int main() {
         // cout << "players:" << players_in << " curPlayer: " << cur_player
         //      << " player[1] " << players[1] << " back: " << players.back()
         //      << endl;
-        //! SINGLE PLAYER
-        if (cur_player->GetHuman() == false) {
-          row_in = (rand() % board->GetSize()) + 1;
-          column_in = (rand() % board->GetSize()) + 1;
-          cout << cur_player->GetName() << " chooses row: " << row_in
-               << " col: " << column_in << endl;
-        } else {
+        //! choose space
+        // if (cur_player->GetHuman() == false) {
+        //   // todo put this in mark square
+        //   row_in = board->GetRandomPos();
+        //   column_in = board->GetRandomPos();
+        //   cout << cur_player->GetName() << " chooses row: " << row_in
+        //        << " col: " << column_in << endl;
+        // }
+
+        if (cur_player->GetHuman() == true) {
           cout << "Choose row: ";
           cin >> row_in;
           cout << "Choose column: ";
           cin >> column_in;
         };
+        if (board->MarkSquare(row_in, column_in, cur_player) == false) continue;
       };
-      if (TESTING) {
-        row_in = (rand() % board->GetSize()) + 1;
-        column_in = (rand() % board->GetSize()) + 1;
-        // cout << "row: " << row_in << " col: " << column_in << endl;
-      }
-      if (board->MarkSquare(row_in, column_in, cur_player) == false) {
-        if (!TESTING) cout << "Invalid space. Try again..." << endl;
-        continue;
-      };
+
       // if (!TESTING)
       // cout << *board;
       if (board->CheckWin(cur_player)) {
@@ -145,14 +146,14 @@ int main() {
     cout << *board;
     //! print stats and inc game played
     for (Player* player : players) {
-      cout << *player;
       player->IncGamesPlayed();
+      cout << *player;
     }
     // or use q to quit...
     if (TESTING and ++test_round == num_of_test_rounds) break;
 
     if (!TESTING) {
-      std::string play_again = "n";
+      string play_again = "n";
       cout << "Play again? (n or y): ";
       cin >> play_again;
 

@@ -53,18 +53,27 @@ int* Board::GetSquare(int row, int column) const {
     return nullptr;
 };
 
+int Board::GetRandomPos() const { return (rand() % size_) + 1; }
+
 bool Board::MarkSquare(int row, int column, Player* player) {
-  // change to 1 base index
+  // todo set human var? efficiency of checking human twice
+  if (!player->GetHuman()) {
+    row = GetRandomPos();
+    column = GetRandomPos();
+  }
+
   --row;
   --column;
-  int* squarePtr = GetSquare(row, column);
+  // change to 1 base index
   // squarePtr == nullptr if out of range
+  int* squarePtr = GetSquare(row, column);
 
   if (squarePtr != nullptr && *squarePtr == 0) {
     *board_[row][column] = player->GetId();
     ++totalMoves_;
     return true;
   };
+  if (player->GetHuman()) cout << "Invalid space. Try again..." << endl;
   return false;
 };
 
