@@ -10,11 +10,12 @@ class Player {
   string name_ = "";
   double wins_{0};
   double games_played_{0};
+  bool human_ = true;
 
   int player_id_;
 
  public:
-  Player() : Player("Player "){};
+  Player();
   Player(string name);
   ~Player(){
       // delete name_;
@@ -28,6 +29,7 @@ class Player {
   double GetWins();
   void IncGamesPlayed();
   double GetGamesPlayed();
+  bool GetHuman() { return human_; }
 
   // show stats
   friend std::ostream& operator<<(std::ostream& out, const Player& player);

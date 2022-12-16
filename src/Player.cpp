@@ -6,6 +6,7 @@
 using std::string;
 
 int Player::cur_playerId = 1;
+Player::Player() : Player("Player ") { human_ = false; };
 
 Player::Player(string name) {
   player_id_ = cur_playerId++;

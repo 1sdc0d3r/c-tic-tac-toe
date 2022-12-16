@@ -21,28 +21,46 @@ int main() {
   int num_of_test_rounds{15};
 
   // Use current time as seed for TESTING random generator
-  if (TESTING) srand(time(0));
-
-  Board* board = new Board(3);
+  srand(time(0));
 
   int row_in = 0;
   int column_in = 0;
   int players_in = 0;
-  std::string play_again = "n";
+  int bots_in = 0;
+  int board_size = 3;
+  // int total_players = 0; //todo maybe? DRY
+  const static int kMax_total_players = 5;
+
+  Board* board = new Board(board_size);
 
   cout << "Welcome to multiplayer tic-tac-toe!\nHow many players do you "
-          "want?[max: 5] ";
+          "want?[max: "
+       << kMax_total_players << "] ";
 
   if (!TESTING) cin >> players_in;
 
+  if (players_in < kMax_total_players) {
+    cout << "How many computer bots do you want?[max: "
+         << kMax_total_players - players_in << "] ";
+    if (!TESTING) cin >> bots_in;
+  }
+
   if (TESTING) players_in = 2;
 
-  if (players_in > 5)
-    players_in = 5;
+  // too many players or not enough
+  if (players_in > kMax_total_players)
+    players_in = kMax_total_players;
   else if (players_in < 1)
     players_in = 1;
 
-  vector<Player*> players(players_in == 1 ? 2 : players_in, nullptr);
+  // too many bots or not enough
+  if (players_in + bots_in > kMax_total_players)
+    bots_in = kMax_total_players - players_in;
+  else if (players_in == 1 && bots_in < 1)
+    bots_in = 1;
+
+  // vector<Player*> players(players_in == 1 ? 2 : players_in, nullptr);
+  vector<Player*> players(players_in + bots_in, nullptr);
 
   //? why does this work below for loop and not above...
   // if (players_in == 1) {
@@ -51,25 +69,26 @@ int main() {
   // };
 
   string player_name = "";
-  for (int i = 0; i < players_in; ++i) {
-    cout << "\nPlayer " << i + 1 << " choose your name: ";
-    if (!TESTING) cin >> player_name;
+  for (int i = 0; i < players_in + bots_in; ++i) {
+    if (i < players_in) {
+      cout << "\nPlayer " << i + 1 << " choose your name: ";
+      if (!TESTING) cin >> player_name;
 
-    // if (TESTING) player->player_name += to_string(i);
-
-    players[i] = new Player(player_name);
+      players[i] = new Player(player_name);
+    } else  // populate bots
+      players[i] = new Player();
     //? players.push_back(new Player(player_name));
   };
 
-  if (players_in == 1) {
-    // players.resize(2);  // or use if statement for initialization
-    players[1] = new Player();
-  };
+  // if (players_in == 1) {
+  // players.resize(2);  // or use if statement for initialization
+  // };
 
+  cout << endl;
   while (playing) {
-    cout << endl;
-    Player* cur_player = *players.begin();
-    // cout << "cur: " << cur_player->GetId() << endl;
+    // Player* cur_player = *players.begin();
+    //* set starting player randomly
+    Player* cur_player = players[rand() % (players_in + bots_in)];
 
     while (true) {
       if (!TESTING) cout << *board;
@@ -81,14 +100,11 @@ int main() {
         //      << " player[1] " << players[1] << " back: " << players.back()
         //      << endl;
         //! SINGLE PLAYER
-        if (players_in == 1 && cur_player == players[1]) {
-          cout << "Choose row: ";
+        if (cur_player->GetHuman() == false) {
           row_in = (rand() % board->GetSize()) + 1;
-          cout << row_in << endl;
-
-          cout << "Choose column: ";
           column_in = (rand() % board->GetSize()) + 1;
-          cout << column_in << endl;
+          cout << cur_player->GetName() << " chooses row: " << row_in
+               << " col: " << column_in << endl;
         } else {
           cout << "Choose row: ";
           cin >> row_in;
@@ -136,6 +152,7 @@ int main() {
     if (TESTING and ++test_round == num_of_test_rounds) break;
 
     if (!TESTING) {
+      std::string play_again = "n";
       cout << "Play again? (n or y): ";
       cin >> play_again;
 
@@ -147,6 +164,7 @@ int main() {
 
     delete board;
     board = new Board;
+    cout << endl;
   }
   return 0;
 }

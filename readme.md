@@ -1,4 +1,5 @@
 add multiple bots
+be able to use this setup for multiple games [battleShip, 4-in-a-row]
 
 invalid inputs for all cin
 
