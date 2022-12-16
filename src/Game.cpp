@@ -28,6 +28,7 @@ int main() {
   int row_in = 0;
   int column_in = 0;
   int players_in = 0;
+  std::string play_again = "n";
 
   cout << "Welcome to multiplayer tic-tac-toe!\nHow many players do you "
           "want?[max: 5] ";
@@ -41,7 +42,7 @@ int main() {
   else if (players_in < 1)
     players_in = 1;
 
-  vector<Player*> players(players_in == 1 ? 2 : players_in);
+  vector<Player*> players(players_in == 1 ? 2 : players_in, nullptr);
 
   //? why does this work below for loop and not above...
   // if (players_in == 1) {
@@ -52,9 +53,10 @@ int main() {
   string player_name = "Jack Barry ";
   for (int i = 0; i < players_in; ++i) {
     cout << "\nPlayer " << i + 1 << " choose your name: ";
-    if (!TESTING) cin >> player_name;
-    if (!TESTING) player_name = "me";
-    if (TESTING) player_name += to_string(i);
+    //! if (!TESTING) cin >> player_name
+
+    // if (TESTING)
+    player_name += to_string(i);
 
     players[i] = new Player(player_name);
     //? players.push_back(new Player(player_name));
@@ -68,11 +70,7 @@ int main() {
   while (playing) {
     cout << endl;
     Player* cur_player = *players.begin();
-    cout << "cur: " << cur_player->GetId() << endl;
-    ;
-    for (Player* player : players) {
-      cout << *player;
-    }
+    // cout << "cur: " << cur_player->GetId() << endl;
 
     while (true) {
       if (!TESTING) cout << *board;
@@ -80,17 +78,17 @@ int main() {
       if (!TESTING) cout << '\n' << cur_player->GetName() << "'s turn." << endl;
       if (!TESTING) {
         // todo use cout row/column same as testing
-        cout << "players:" << players_in << " curPlayer: " << cur_player
-             << " player[1] " << players[1] << " back: " << players.back()
-             << endl;
-
+        // cout << "players:" << players_in << " curPlayer: " << cur_player
+        //      << " player[1] " << players[1] << " back: " << players.back()
+        //      << endl;
+        //! SINGLE PLAYER
         if (players_in == 1 && cur_player == players[1]) {
           cout << "Choose row: ";
-          row_in = rand() % board->GetSize();
+          row_in = (rand() % board->GetSize()) + 1;
           cout << row_in << endl;
 
           cout << "Choose column: ";
-          column_in = rand() % board->GetSize();
+          column_in = (rand() % board->GetSize()) + 1;
           cout << column_in << endl;
         } else {
           cout << "Choose row: ";
@@ -98,28 +96,11 @@ int main() {
           cout << "Choose column: ";
           cin >> column_in;
         };
-      } else {
-        row_in = rand() % board->GetSize();
-        column_in = rand() % board->GetSize();
-        // cout << "moves: " << board->GetMoves() << endl;
-        if (board->GetMoves() == 0) {
-          cout << "move: " << 0 << endl;
-          row_in = 0;
-          column_in = 2;
-        } else if (board->GetMoves() == 1) {
-          cout << "move: " << 1 << endl;
-          row_in = 1;
-          column_in = 1;
-        } else if (board->GetMoves() == 2) {
-          cout << "move: " << 2 << endl;
-          row_in = 2;
-          column_in = 0;
-        }
-        cout << "rand: " << row_in << " " << column_in << endl;
-        row_in++;
-        column_in++;
-        if (!TESTING)
-          cout << "row: " << row_in << " col: " << column_in << endl;
+      };
+      if (TESTING) {
+        row_in = (rand() % board->GetSize()) + 1;
+        column_in = (rand() % board->GetSize()) + 1;
+        cout << "row: " << row_in << " col: " << column_in << endl;
       }
       if (board->MarkSquare(row_in, column_in, cur_player) == false) {
         if (!TESTING) cout << "Invalid space. Try again..." << endl;
@@ -132,7 +113,6 @@ int main() {
         if (TESTING) cout << "row: " << row_in << " col: " << column_in << endl;
         break;
       } else if (board->GetMoves() == (board->GetSize() * board->GetSize())) {
-        if (TESTING) cout << *board;
         cout << "It's a tie!" << endl;
         break;
       };
@@ -146,24 +126,23 @@ int main() {
       // cur_player == & player1 ? cur_player = &player2 : cur_player =
       // &player1;
     }
-    // print stats and inc game played
+    cout << *board;
+    //! print stats and inc game played
     for (Player* player : players) {
       cout << *player;
       player->IncGamesPlayed();
     }
-    std::string play_again = "n";
-    if (TESTING and ++test_round < num_of_test_rounds) {
-      play_again = "y";
-    } else
-      play_again = "n";
+    // or use q to quit...
+    if (TESTING and ++test_round == num_of_test_rounds) break;
+
     if (!TESTING) {
       cout << "Play again? (n or y): ";
       cin >> play_again;
-    };
 
-    if (play_again == "n") {
-      cout << endl;
-      break;
+      if (play_again == "n") {
+        cout << endl;
+        break;
+      };
     };
 
     delete board;

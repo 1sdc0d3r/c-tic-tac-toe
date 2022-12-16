@@ -60,7 +60,7 @@ bool Board::MarkSquare(int row, int column, Player* player) {
   int* squarePtr = GetSquare(row, column);
   // squarePtr == nullptr if out of range
 
-  if (*squarePtr == 0) {
+  if (squarePtr != nullptr && *squarePtr == 0) {
     *board_[row][column] = player->GetId();
     ++totalMoves_;
     return true;
