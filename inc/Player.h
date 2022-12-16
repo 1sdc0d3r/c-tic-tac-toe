@@ -14,7 +14,7 @@ class Player {
   int player_id_;
 
  public:
-  Player();
+  Player() : Player("Player "){};
   Player(string name);
   ~Player(){
       // delete name_;

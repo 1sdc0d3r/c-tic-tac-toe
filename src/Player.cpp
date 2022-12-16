@@ -7,16 +7,10 @@ using std::string;
 
 int Player::cur_playerId = 1;
 
-Player::Player() : player_id_(cur_playerId) {
-  string name = "Player ";
-  name += std::to_string(player_id_);
-
+Player::Player(string name) {
+  player_id_ = cur_playerId++;
+  if (name == "Player ") name += std::to_string(player_id_);
   SetName(name);
-  ++cur_playerId;
-};
-Player::Player(string name) : player_id_(cur_playerId) {
-  SetName(name);
-  ++cur_playerId;
 };
 
 void Player::SetName(string& name) { name_ = string(name); };

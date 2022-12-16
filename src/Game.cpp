@@ -50,13 +50,12 @@ int main() {
   //   players[1] = new Player("Jack Barry");
   // };
 
-  string player_name = "Jack Barry ";
+  string player_name = "";
   for (int i = 0; i < players_in; ++i) {
     cout << "\nPlayer " << i + 1 << " choose your name: ";
-    //! if (!TESTING) cin >> player_name
+    if (!TESTING) cin >> player_name;
 
-    // if (TESTING)
-    player_name += to_string(i);
+    // if (TESTING) player->player_name += to_string(i);
 
     players[i] = new Player(player_name);
     //? players.push_back(new Player(player_name));
@@ -64,7 +63,7 @@ int main() {
 
   if (players_in == 1) {
     // players.resize(2);  // or use if statement for initialization
-    players[1] = new Player("Jack Barry");
+    players[1] = new Player();
   };
 
   while (playing) {
@@ -100,7 +99,7 @@ int main() {
       if (TESTING) {
         row_in = (rand() % board->GetSize()) + 1;
         column_in = (rand() % board->GetSize()) + 1;
-        cout << "row: " << row_in << " col: " << column_in << endl;
+        // cout << "row: " << row_in << " col: " << column_in << endl;
       }
       if (board->MarkSquare(row_in, column_in, cur_player) == false) {
         if (!TESTING) cout << "Invalid space. Try again..." << endl;
@@ -110,7 +109,8 @@ int main() {
       // cout << *board;
       if (board->CheckWin(cur_player)) {
         // if (TESTING) cout << *board;
-        if (TESTING) cout << "row: " << row_in << " col: " << column_in << endl;
+        // if (TESTING) cout << "row: " << row_in << " col: " << column_in <<
+        // endl;
         break;
       } else if (board->GetMoves() == (board->GetSize() * board->GetSize())) {
         cout << "It's a tie!" << endl;
